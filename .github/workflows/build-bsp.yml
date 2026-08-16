@@ -1,61 +1,87 @@
-name: Build Gobekli Tepe BSP v14
+name: Build Gobekli Tepe BSP v15
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "fy_gobeklitepe_v14.map"
+      - "fy_gobeklitepe_v15.map"
       - "fy_gobeklitepe.wad"
+      - "gfx/env/**"
       - ".github/workflows/build-bsp.yml"
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - name: Repo dosyalarini al
         uses: actions/checkout@v4
+
       - name: VHLT v34 indir
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
           Invoke-WebRequest -Uri "https://github.com/twhl-community/VHLT-V34/releases/download/V34/Vluzacn.s.ZHLT.v34.zip" -OutFile vhlt.zip
           Expand-Archive -LiteralPath vhlt.zip -DestinationPath vhlt -Force
+
       - name: Derleyicileri bul
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-          function F($a,$b) { $x=Get-ChildItem vhlt -Recurse -File | Where-Object { $_.Name -ieq $a -or $_.Name -ieq $b } | Select-Object -First 1; if(-not $x){throw "Bulunamadi: $a"}; return $x.FullName }
-          "CSG=$(F 'hlcsg_x64.exe' 'hlcsg.exe')" | Out-File $env:GITHUB_ENV -Append
-          "BSP=$(F 'hlbsp_x64.exe' 'hlbsp.exe')" | Out-File $env:GITHUB_ENV -Append
-          "VIS=$(F 'hlvis_x64.exe' 'hlvis.exe')" | Out-File $env:GITHUB_ENV -Append
-          "RAD=$(F 'hlrad_x64.exe' 'hlrad.exe')" | Out-File $env:GITHUB_ENV -Append
+
+          function Find-Tool($n64,$n32) {
+            $x = Get-ChildItem vhlt -Recurse -File |
+              Where-Object { $_.Name -ieq $n64 -or $_.Name -ieq $n32 } |
+              Select-Object -First 1
+            if (-not $x) { throw "Bulunamadi: $n64 / $n32" }
+            return $x.FullName
+          }
+
+          "CSG=$(Find-Tool 'hlcsg_x64.exe' 'hlcsg.exe')" | Out-File $env:GITHUB_ENV -Append
+          "BSP=$(Find-Tool 'hlbsp_x64.exe' 'hlbsp.exe')" | Out-File $env:GITHUB_ENV -Append
+          "VIS=$(Find-Tool 'hlvis_x64.exe' 'hlvis.exe')" | Out-File $env:GITHUB_ENV -Append
+          "RAD=$(Find-Tool 'hlrad_x64.exe' 'hlrad.exe')" | Out-File $env:GITHUB_ENV -Append
+
       - name: MAP derle
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-          mkdir build -Force | Out-Null
-          Copy-Item fy_gobeklitepe_v14.map build\
+          New-Item -ItemType Directory -Force build | Out-Null
+          Copy-Item fy_gobeklitepe_v15.map build\
           Copy-Item fy_gobeklitepe.wad build\
-          cd build
-          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v14.map
-          if($LASTEXITCODE -ne 0){throw "HLCSG: $LASTEXITCODE"}
-          & "$env:BSP" fy_gobeklitepe_v14.map
-          if($LASTEXITCODE -ne 0){throw "HLBSP: $LASTEXITCODE"}
-          & "$env:VIS" -full fy_gobeklitepe_v14.map
-          if($LASTEXITCODE -ne 0){throw "HLVIS: $LASTEXITCODE"}
-          & "$env:RAD" fy_gobeklitepe_v14.map
-          if($LASTEXITCODE -ne 0){throw "HLRAD: $LASTEXITCODE"}
-      - name: BSP artifact
+          Set-Location build
+
+          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v15.map
+          if ($LASTEXITCODE -ne 0) { throw "HLCSG hata kodu: $LASTEXITCODE" }
+
+          & "$env:BSP" fy_gobeklitepe_v15.map
+          if ($LASTEXITCODE -ne 0) { throw "HLBSP hata kodu: $LASTEXITCODE" }
+
+          & "$env:VIS" -full fy_gobeklitepe_v15.map
+          if ($LASTEXITCODE -ne 0) { throw "HLVIS hata kodu: $LASTEXITCODE" }
+
+          & "$env:RAD" fy_gobeklitepe_v15.map
+          if ($LASTEXITCODE -ne 0) { throw "HLRAD hata kodu: $LASTEXITCODE" }
+
+      - name: Oyun paketini hazirla
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force package\gfx\env | Out-Null
+          Copy-Item build\fy_gobeklitepe_v15.bsp package\fy_gobeklitepe_v15.bsp
+          Copy-Item gfx\env\gobekli15*.tga package\gfx\env\
+
+      - name: BSP ve gokyuzunu indirilebilir yap
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v14-BSP
-          path: build/fy_gobeklitepe_v14.bsp
+          name: fy_gobeklitepe_v15-GAME
+          path: package/**
           if-no-files-found: error
+
       - name: Debug artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v14-build-debug
+          name: fy_gobeklitepe_v15-build-debug
           path: |
             build/*.log
             build/*.map
