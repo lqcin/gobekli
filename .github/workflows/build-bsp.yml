@@ -1,10 +1,10 @@
-name: Build Gobekli Tepe BSP v20
+name: Build Gobekli Tepe BSP v21
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "fy_gobeklitepe_v20.map"
+      - "fy_gobeklitepe_v21.map"
       - "fy_gobeklitepe.wad"
       - ".github/workflows/build-bsp.yml"
 
@@ -42,30 +42,38 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force build | Out-Null
-          Copy-Item fy_gobeklitepe_v20.map build\
+          Copy-Item fy_gobeklitepe_v21.map build\
           Copy-Item fy_gobeklitepe.wad build\
           Set-Location build
-          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v20.map
+
+          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v21.map
           if ($LASTEXITCODE -ne 0) { throw "HLCSG hata kodu: $LASTEXITCODE" }
-          & "$env:BSP" fy_gobeklitepe_v20.map
+
+          & "$env:BSP" fy_gobeklitepe_v21.map
           if ($LASTEXITCODE -ne 0) { throw "HLBSP hata kodu: $LASTEXITCODE" }
-          & "$env:VIS" -full fy_gobeklitepe_v20.map
+
+          & "$env:VIS" -full fy_gobeklitepe_v21.map
           if ($LASTEXITCODE -ne 0) { throw "HLVIS hata kodu: $LASTEXITCODE" }
-          & "$env:RAD" fy_gobeklitepe_v20.map
+
+          & "$env:RAD" fy_gobeklitepe_v21.map
           if ($LASTEXITCODE -ne 0) { throw "HLRAD hata kodu: $LASTEXITCODE" }
+
+          if (-not (Test-Path fy_gobeklitepe_v21.bsp)) {
+            throw "BSP uretilmedi."
+          }
 
       - name: BSP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v20-BSP
-          path: build/fy_gobeklitepe_v20.bsp
+          name: fy_gobeklitepe_v21-BSP
+          path: build/fy_gobeklitepe_v21.bsp
           if-no-files-found: error
 
       - name: Debug artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v20-build-debug
+          name: fy_gobeklitepe_v21-build-debug
           path: |
             build/*.log
             build/*.map
