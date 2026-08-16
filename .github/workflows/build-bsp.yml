@@ -63,7 +63,7 @@ jobs:
 
           Set-Location build
 
-          Write-Host "MAP baslangici:"
+          Write-Host "MAP baslangici - FIX2 ters yuz winding:"
           Get-Content fy_gobeklitepe_v12.map -TotalCount 12
 
           & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v12.map
