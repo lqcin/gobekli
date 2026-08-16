@@ -63,7 +63,7 @@ jobs:
 
           Set-Location build
 
-          Write-Host "MAP baslangici - FIX2 ters yuz winding:"
+          Write-Host "MAP baslangici - FIX3 dogru Valve220 texture axes:"
           Get-Content fy_gobeklitepe_v12.map -TotalCount 12
 
           & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v12.map
@@ -96,7 +96,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v12-build-logs
+          name: fy_gobeklitepe_v12-build-debug
           path: |
             build/*.log
             build/*.p*
