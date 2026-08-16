@@ -1,0 +1,23 @@
+V12 FIX2
+=========
+GitHub Actions logundaki:
+  outside world (+/-32767)
+  Illegal Brush (edge without opposite face)
+hatalarının gerçek nedeni brush yüzlerinin ters yönde yazılmasıydı.
+
+İlk jeneratörde her düzlemin 3 noktası dışa bakan normal oluşturuyordu.
+GoldSrc/Hammer MAP derleyicisinin beklediği winding'e çevirmek için her
+brush yüzünde 2. ve 3. noktaların sırası ters çevrildi.
+
+Bu pakette repo üzerinde özellikle şu dosyayı değiştir:
+  fy_gobeklitepe_v12.map
+
+Workflow'u da bu paketteki sürümle değiştirmen önerilir:
+  .github/workflows/build-bsp.yml
+
+Sonra:
+Actions > Build Gobekli Tepe BSP > Run workflow
+
+Başarılı olursa:
+fy_gobeklitepe_v12-BSP
+artifact'i oluşacaktır.
