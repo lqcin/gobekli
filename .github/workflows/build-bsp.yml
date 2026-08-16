@@ -63,6 +63,9 @@ jobs:
 
           Set-Location build
 
+          Write-Host "MAP baslangici:"
+          Get-Content fy_gobeklitepe_v12.map -TotalCount 12
+
           & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v12.map
           if ($LASTEXITCODE -ne 0) { throw "HLCSG hata kodu: $LASTEXITCODE" }
 
@@ -87,3 +90,16 @@ jobs:
           name: fy_gobeklitepe_v12-BSP
           path: build/fy_gobeklitepe_v12.bsp
           if-no-files-found: error
+
+
+      - name: Derleme loglarini her durumda yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fy_gobeklitepe_v12-build-logs
+          path: |
+            build/*.log
+            build/*.p*
+            build/*.bsp
+            build/*.map
+          if-no-files-found: warn
