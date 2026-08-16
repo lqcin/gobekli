@@ -1,105 +1,63 @@
-name: Build Gobekli Tepe BSP
+name: Build Gobekli Tepe BSP v13
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "fy_gobeklitepe_v12.map"
+      - "fy_gobeklitepe_v13.map"
       - "fy_gobeklitepe.wad"
       - ".github/workflows/build-bsp.yml"
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - name: Repo dosyalarini al
         uses: actions/checkout@v4
-
       - name: VHLT v34 indir
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-          $url = "https://github.com/twhl-community/VHLT-V34/releases/download/V34/Vluzacn.s.ZHLT.v34.zip"
-          Invoke-WebRequest -Uri $url -OutFile vhlt.zip
+          Invoke-WebRequest -Uri "https://github.com/twhl-community/VHLT-V34/releases/download/V34/Vluzacn.s.ZHLT.v34.zip" -OutFile vhlt.zip
           Expand-Archive -LiteralPath vhlt.zip -DestinationPath vhlt -Force
-
       - name: Derleyicileri bul
-        id: tools
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-
-          function Find-Tool($name64, $name32) {
-            $x = Get-ChildItem -Path vhlt -Recurse -File |
-              Where-Object { $_.Name -ieq $name64 -or $_.Name -ieq $name32 } |
-              Select-Object -First 1
-            if (-not $x) { throw "Bulunamadi: $name64 / $name32" }
-            return $x.FullName
-          }
-
-          $csg = Find-Tool "hlcsg_x64.exe" "hlcsg.exe"
-          $bsp = Find-Tool "hlbsp_x64.exe" "hlbsp.exe"
-          $vis = Find-Tool "hlvis_x64.exe" "hlvis.exe"
-          $rad = Find-Tool "hlrad_x64.exe" "hlrad.exe"
-
-          "CSG=$csg" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "BSP=$bsp" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "VIS=$vis" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "RAD=$rad" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-          Write-Host "CSG: $csg"
-          Write-Host "BSP: $bsp"
-          Write-Host "VIS: $vis"
-          Write-Host "RAD: $rad"
-
+          function F($a,$b) { $x=Get-ChildItem vhlt -Recurse -File | Where-Object { $_.Name -ieq $a -or $_.Name -ieq $b } | Select-Object -First 1; if(-not $x){throw "Bulunamadi: $a"}; return $x.FullName }
+          "CSG=$(F 'hlcsg_x64.exe' 'hlcsg.exe')" | Out-File $env:GITHUB_ENV -Append
+          "BSP=$(F 'hlbsp_x64.exe' 'hlbsp.exe')" | Out-File $env:GITHUB_ENV -Append
+          "VIS=$(F 'hlvis_x64.exe' 'hlvis.exe')" | Out-File $env:GITHUB_ENV -Append
+          "RAD=$(F 'hlrad_x64.exe' 'hlrad.exe')" | Out-File $env:GITHUB_ENV -Append
       - name: MAP derle
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-          New-Item -ItemType Directory -Force build | Out-Null
-          Copy-Item fy_gobeklitepe_v12.map build\
+          mkdir build -Force | Out-Null
+          Copy-Item fy_gobeklitepe_v13.map build\
           Copy-Item fy_gobeklitepe.wad build\
-
-          Set-Location build
-
-          Write-Host "MAP baslangici - FIX3 dogru Valve220 texture axes:"
-          Get-Content fy_gobeklitepe_v12.map -TotalCount 12
-
-          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v12.map
-          if ($LASTEXITCODE -ne 0) { throw "HLCSG hata kodu: $LASTEXITCODE" }
-
-          & "$env:BSP" fy_gobeklitepe_v12.map
-          if ($LASTEXITCODE -ne 0) { throw "HLBSP hata kodu: $LASTEXITCODE" }
-
-          & "$env:VIS" -full fy_gobeklitepe_v12.map
-          if ($LASTEXITCODE -ne 0) { throw "HLVIS hata kodu: $LASTEXITCODE" }
-
-          & "$env:RAD" fy_gobeklitepe_v12.map
-          if ($LASTEXITCODE -ne 0) { throw "HLRAD hata kodu: $LASTEXITCODE" }
-
-          if (-not (Test-Path fy_gobeklitepe_v12.bsp)) {
-            throw "BSP uretilmedi."
-          }
-
-          Get-ChildItem fy_gobeklitepe_v12.* | Format-Table Name,Length
-
-      - name: BSP dosyasini indirilebilir yap
+          cd build
+          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v13.map
+          if($LASTEXITCODE -ne 0){throw "HLCSG: $LASTEXITCODE"}
+          & "$env:BSP" fy_gobeklitepe_v13.map
+          if($LASTEXITCODE -ne 0){throw "HLBSP: $LASTEXITCODE"}
+          & "$env:VIS" -full fy_gobeklitepe_v13.map
+          if($LASTEXITCODE -ne 0){throw "HLVIS: $LASTEXITCODE"}
+          & "$env:RAD" fy_gobeklitepe_v13.map
+          if($LASTEXITCODE -ne 0){throw "HLRAD: $LASTEXITCODE"}
+      - name: BSP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v12-BSP
-          path: build/fy_gobeklitepe_v12.bsp
+          name: fy_gobeklitepe_v13-BSP
+          path: build/fy_gobeklitepe_v13.bsp
           if-no-files-found: error
-
-
-      - name: Derleme loglarini her durumda yukle
+      - name: Debug artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v12-build-debug
+          name: fy_gobeklitepe_v13-build-debug
           path: |
             build/*.log
-            build/*.p*
-            build/*.bsp
             build/*.map
+            build/*.bsp
           if-no-files-found: warn
