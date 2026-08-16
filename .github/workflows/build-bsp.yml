@@ -1,10 +1,10 @@
-name: Build Gobekli Tepe BSP v13
+name: Build Gobekli Tepe BSP v14
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "fy_gobeklitepe_v13.map"
+      - "fy_gobeklitepe_v14.map"
       - "fy_gobeklitepe.wad"
       - ".github/workflows/build-bsp.yml"
 
@@ -34,28 +34,28 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           mkdir build -Force | Out-Null
-          Copy-Item fy_gobeklitepe_v13.map build\
+          Copy-Item fy_gobeklitepe_v14.map build\
           Copy-Item fy_gobeklitepe.wad build\
           cd build
-          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v13.map
+          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v14.map
           if($LASTEXITCODE -ne 0){throw "HLCSG: $LASTEXITCODE"}
-          & "$env:BSP" fy_gobeklitepe_v13.map
+          & "$env:BSP" fy_gobeklitepe_v14.map
           if($LASTEXITCODE -ne 0){throw "HLBSP: $LASTEXITCODE"}
-          & "$env:VIS" -full fy_gobeklitepe_v13.map
+          & "$env:VIS" -full fy_gobeklitepe_v14.map
           if($LASTEXITCODE -ne 0){throw "HLVIS: $LASTEXITCODE"}
-          & "$env:RAD" fy_gobeklitepe_v13.map
+          & "$env:RAD" fy_gobeklitepe_v14.map
           if($LASTEXITCODE -ne 0){throw "HLRAD: $LASTEXITCODE"}
       - name: BSP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v13-BSP
-          path: build/fy_gobeklitepe_v13.bsp
+          name: fy_gobeklitepe_v14-BSP
+          path: build/fy_gobeklitepe_v14.bsp
           if-no-files-found: error
       - name: Debug artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v13-build-debug
+          name: fy_gobeklitepe_v14-build-debug
           path: |
             build/*.log
             build/*.map
