@@ -1,5 +1,6 @@
 {
 "classname" "worldspawn"
+"mapversion" "220"
 "message" "FY Gobekli Tepe - Er Meydani v1.2"
 "skyname" "desert"
 "wad" "fy_gobeklitepe.wad"
