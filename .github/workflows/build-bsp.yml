@@ -1,15 +1,12 @@
-name: Build Gobekli Tepe FINAL RC v28
+name: Build fy_gobeklitepe FINAL
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "fy_gobeklitepe_v28.map"
+      - "fy_gobeklitepe.map"
       - "fy_gobeklitepe.wad"
-      - "fy_gobeklitepe_v28.res"
-      - "overviews/**"
-      - "submission/**"
-      - "tools/preflight_v28.py"
+      - "tools/preflight.py"
       - ".github/workflows/build-bsp.yml"
 
 jobs:
@@ -20,12 +17,9 @@ jobs:
       - name: Repo dosyalarini al
         uses: actions/checkout@v4
 
-      - name: Preflight kontrol
+      - name: Final preflight
         shell: powershell
-        run: |
-          $ErrorActionPreference = "Stop"
-          python tools\preflight_v28.py
-          if ($LASTEXITCODE -ne 0) { throw "Preflight hata kodu: $LASTEXITCODE" }
+        run: python tools/preflight.py
 
       - name: VHLT v34 indir
         shell: powershell
@@ -39,7 +33,7 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           function Find-Tool($n64,$n32) {
-            $x = Get-ChildItem vhlt -Recurse -File |
+            $x=Get-ChildItem vhlt -Recurse -File |
               Where-Object { $_.Name -ieq $n64 -or $_.Name -ieq $n32 } |
               Select-Object -First 1
             if (-not $x) { throw "Bulunamadi: $n64 / $n32" }
@@ -55,45 +49,53 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force build | Out-Null
-          Copy-Item fy_gobeklitepe_v28.map build\
+          Copy-Item fy_gobeklitepe.map build\
           Copy-Item fy_gobeklitepe.wad build\
           Set-Location build
 
-          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe_v28.map
+          & "$env:CSG" -nowadtextures -cliptype precise fy_gobeklitepe.map
           if ($LASTEXITCODE -ne 0) { throw "HLCSG hata kodu: $LASTEXITCODE" }
 
-          & "$env:BSP" fy_gobeklitepe_v28.map
+          & "$env:BSP" fy_gobeklitepe.map
           if ($LASTEXITCODE -ne 0) { throw "HLBSP hata kodu: $LASTEXITCODE" }
 
-          & "$env:VIS" -full fy_gobeklitepe_v28.map
+          & "$env:VIS" -full fy_gobeklitepe.map
           if ($LASTEXITCODE -ne 0) { throw "HLVIS hata kodu: $LASTEXITCODE" }
 
-          & "$env:RAD" fy_gobeklitepe_v28.map
+          & "$env:RAD" fy_gobeklitepe.map
           if ($LASTEXITCODE -ne 0) { throw "HLRAD hata kodu: $LASTEXITCODE" }
 
-          if (-not (Test-Path fy_gobeklitepe_v28.bsp)) {
-            throw "BSP uretilmedi."
-          }
+          if (-not (Test-Path fy_gobeklitepe.bsp)) { throw "fy_gobeklitepe.bsp uretilmedi." }
 
-      - name: Final test paketini hazirla
+      - name: Final oyun paketini hazirla
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force package\cstrike\maps | Out-Null
-          New-Item -ItemType Directory -Force package\cstrike\overviews | Out-Null
+          Copy-Item build\fy_gobeklitepe.bsp package\cstrike\maps\fy_gobeklitepe.bsp
 
-          Copy-Item build\fy_gobeklitepe_v28.bsp package\cstrike\maps\fy_gobeklitepe_v28.bsp
-          Copy-Item fy_gobeklitepe_v28.res package\cstrike\maps\fy_gobeklitepe_v28.res
-          Copy-Item overviews\fy_gobeklitepe_v28.bmp package\cstrike\overviews\fy_gobeklitepe_v28.bmp
-          Copy-Item overviews\fy_gobeklitepe_v28.txt package\cstrike\overviews\fy_gobeklitepe_v28.txt
-          Copy-Item submission\PLAY_CS_SUBMISSION_EN.txt package\PLAY_CS_SUBMISSION_EN.txt
-          Copy-Item submission\fy_gobeklitepe_v28_TOPDOWN.png package\fy_gobeklitepe_v28_TOPDOWN.png
-          Copy-Item FINAL_TEST_CHECKLIST.txt package\FINAL_TEST_CHECKLIST.txt
+          if (Test-Path fy_gobeklitepe.res) {
+            Copy-Item fy_gobeklitepe.res package\cstrike\maps\fy_gobeklitepe.res
+          }
+          if (Test-Path overviews\fy_gobeklitepe.bmp) {
+            New-Item -ItemType Directory -Force package\cstrike\overviews | Out-Null
+            Copy-Item overviews\fy_gobeklitepe.bmp package\cstrike\overviews\
+          }
+          if (Test-Path overviews\fy_gobeklitepe.txt) {
+            New-Item -ItemType Directory -Force package\cstrike\overviews | Out-Null
+            Copy-Item overviews\fy_gobeklitepe.txt package\cstrike\overviews\
+          }
+          if (Test-Path submission\PLAY_CS_SUBMISSION_EN.txt) {
+            Copy-Item submission\PLAY_CS_SUBMISSION_EN.txt package\
+          }
+          if (Test-Path FINAL_TEST_CHECKLIST.txt) {
+            Copy-Item FINAL_TEST_CHECKLIST.txt package\
+          }
 
-      - name: FINAL RC artifact
+      - name: FINAL artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v28-FINAL-RC
+          name: fy_gobeklitepe-FINAL
           path: package/**
           if-no-files-found: error
 
@@ -101,7 +103,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fy_gobeklitepe_v28-build-debug
+          name: fy_gobeklitepe-build-debug
           path: |
             build/*.log
             build/*.map
