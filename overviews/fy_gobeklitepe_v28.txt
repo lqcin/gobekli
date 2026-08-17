@@ -1,0 +1,11 @@
+global
+{
+ zoom 1.0
+ origin 0 0 0
+ rotated 0
+}
+layer
+{
+ image "overviews/fy_gobeklitepe_v28.bmp"
+ height 0
+}
