@@ -1,1 +1,18 @@
+Subject: Custom CS 1.6 map submission - fy_gobeklitepe_v28
 
+Hello Play-CS team,
+
+I would like to submit a custom Counter-Strike 1.6 Fight Yard map inspired by Göbekli Tepe.
+
+Map: fy_gobeklitepe_v28
+Style: Fast-paced FY / Iceworld-inspired arena
+Theme: Göbekli Tepe archaeological stone complex
+Spawns: 12 CT + 12 T, arranged using the spacing pattern measured from the original fy_iceworld.bsp
+Weapons: 20 ground weapons per side
+Gameplay: Central recessed arena with four stair entries, jump-accessible T-pillars, climbable spawn-front platforms, and protected exterior boundaries
+Sky: Stock "snow" sky, no custom skybox files required
+Runtime custom textures: Embedded in BSP
+
+The map has been checked for spawn/solid collisions, inaccessible exterior routes, platform weapon overlap, and risky high-vertex brush faces.
+
+Included are the BSP build resources and a top-down preview.
