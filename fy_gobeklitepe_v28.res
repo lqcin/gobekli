@@ -1,0 +1,2 @@
+overviews/fy_gobeklitepe_v28.bmp
+overviews/fy_gobeklitepe_v28.txt

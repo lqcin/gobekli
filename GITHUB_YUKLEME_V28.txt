@@ -1,0 +1,21 @@
+GOBEKLI TEPE v28 FINAL RC - GITHUB YUKLEME
+============================================
+Repo köküne / mevcut yapıya şu dosyaları yükle:
+
+fy_gobeklitepe_v28.map
+fy_gobeklitepe.wad
+fy_gobeklitepe_v28.res
+tools/preflight_v28.py
+overviews/fy_gobeklitepe_v28.bmp
+overviews/fy_gobeklitepe_v28.txt
+submission/PLAY_CS_SUBMISSION_EN.txt
+submission/fy_gobeklitepe_v28_TOPDOWN.png
+.github/workflows/build-bsp.yml
+
+Sonra:
+Actions > Build Gobekli Tepe FINAL RC v28 > Run workflow
+
+Artifact:
+fy_gobeklitepe_v28-FINAL-RC
+
+Not: WORKFLOW_KOPYASI_build-bsp-v28.yml, gizli .github klasörünü göremezsen sadece görünür yedek kopyadır.
