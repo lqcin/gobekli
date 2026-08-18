@@ -44,7 +44,7 @@ if s.count(' CLIP [')<40:errors.append('clip system too small')
 if 'GT_STONE_L' not in s or 'GT_STONE_R' not in s:errors.append('left/right wall texture split missing')
 if 'GT_FLOOR_L' not in s or 'GT_FLOOR_R' not in s:errors.append('left/right floor texture split missing')
 # platform/steps exact final heights
-wanted=[(-548,48),(-510,82),(548,48),(510,82),(-470,112),(470,112)]
+wanted=[(-548,48),(-510,82),(548,48),(510,82),(-470,112),(470,112),(-420,64),(420,64)]
 for cx,top in wanted:
  found=False
  for x0,x1,y0,y1,z0,z1,b in a:
@@ -52,6 +52,15 @@ for cx,top in wanted:
   if abs(cc-cx)<0.6 and abs((y0+y1)/2)<1 and abs(z0)<0.1 and abs(z1-top)<0.2:
    found=True;break
  if not found:errors.append(f'platform step missing x={cx}, top={top}')
+# rear step lateral extension + front-step width check
+wide=[(-548,440),(-510,440),(548,440),(510,440),(-420,440),(420,440)]
+for cx,minw in wide:
+ found=False
+ for x0,x1,y0,y1,z0,z1,b in a:
+  cc=(x0+x1)/2
+  if abs(cc-cx)<0.6 and (y1-y0)>=minw-0.5:
+   found=True;break
+ if not found:errors.append(f'wide platform step missing x={cx}, width={minw}')
 # reject low perimeter lips
 for i,(x0,x1,y0,y1,z0,z1,b) in enumerate(a):
  cx=(x0+x1)/2;cy=(y0+y1)/2
@@ -63,6 +72,6 @@ print('PREFLIGHT OK')
 print('map: fy_gobeklitepe')
 print('spawns: 12 CT + 12 T')
 print('weapons: 20 CT + 20 T')
-print('platform steps: 48 / 82 / 112')
+print('platform steps: rear 48 / 82 / platform 112 / front 64')
 print('direction textures: LEFT + RIGHT')
 print('clip faces:',s.count(' CLIP ['))
