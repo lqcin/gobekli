@@ -1,0 +1,16 @@
+GITHUB FINAL
+============
+Repo köküne / ilgili klasörlere bu paketin içeriğini yükle.
+Özellikle:
+  fy_gobeklitepe.map
+  fy_gobeklitepe.wad
+  tools/preflight.py
+  .github/workflows/build-bsp.yml
+
+Actions > Build fy_gobeklitepe FINAL > Run workflow
+
+Başarılı artifact adı:
+  fy_gobeklitepe-FINAL
+
+Oyun harita dosyası:
+  cstrike/maps/fy_gobeklitepe.bsp

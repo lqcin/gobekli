@@ -1,14 +1,16 @@
-GOBEKLI TEPE v28 FINAL RC
-=========================
-1. Spawn: oyuncular/botlar canlı ve serbest hareket ediyor.
-2. Arka ve dış duvar: duvar üstünden harita dışına geçilemiyor.
-3. Köşe/duvar araları: dış boşluk görünmüyor ve düşülemiyor.
-4. Spawn önü platform: iki basamakla ve jump ile erişiliyor.
-5. Er Meydanı: 4 merdiven sorunsuz, alt void kapalı.
-6. 4 T sütunu: üstlerine jump ile çıkılabiliyor; kamp için aşırı güçlü değil.
-7. Silahlar: her tarafta 20, rahat alınabiliyor, platform altında değil.
-8. Buyzone: sadece orta üst alan.
-9. Sky: snow, görsel hata yok.
-10. 10 round test: takılma/kaçış/ölü spawn yok.
+FY GOBEKLITEPE - FINAL TEST
+===========================
+1. 12 CT + 12 T doğuşta canlı ve hareketli.
+2. Spawn arkasına veya oval duvar dışına geçilemiyor.
+3. Duvar/köşe aralarında dış boşluk görünmüyor.
+4. Koruyucu platforma 48 -> 82 -> 112 unit akışıyla zıplayarak çıkılıyor.
+5. Er Meydanı 4 merdivenle sorunsuz; alt void kapalı.
+6. 4 T sütununa zıplayarak çıkılabiliyor.
+7. Her tarafta 20 yerde silah var ve erişilebilir.
+8. Buyzone yalnız orta üst alanda.
+9. Sol taraf daha açık, sağ taraf daha sıcak/koyu taş tonuyla ayırt ediliyor.
+10. Snow sky hatasız.
+11. En az 10 round testte sıkışma, ölü spawn veya kaçış yok.
 
-Not: overviews klasörü opsiyonel radar/overview denemesidir; haritanın BSP çalışması buna bağlı değildir.
+11) Spawn tarafindaki basamaklar platform boyunca saga-sola uzuyor mu?
+12) Orta alan tarafindan yeni on basamaga atlayip ana koruyucu platforma cikilabiliyor mu?

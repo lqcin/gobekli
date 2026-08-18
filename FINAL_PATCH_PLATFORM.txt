@@ -1,0 +1,7 @@
+FY_GOBEKLITEPE FINAL PLATFORM PATCH
+===================================
+- Arka taraftaki 48 ve 82 unit basamaklar 180 unit genislikten 440 unit genislige uzatildi.
+- Her iki ana koruyucu platformun orta alan tarafina 64 unit yuksekliginde yeni bir on basamak eklendi.
+- Ana platform ust kotu 112 unit olarak korundu.
+- Hedef akis: zemin / orta alan -> 64 unit on basamak -> 112 unit ana platform.
+- Spawn tarafinda: zemin -> 48 -> 82 -> 112.
